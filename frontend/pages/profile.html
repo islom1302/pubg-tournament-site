@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile</title>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <h1>PUBG Arena</h1>
+    <nav>
+      <a href="../index.html">Home</a>
+      <a href="tournaments.html">Tournaments</a>
+      <a href="admin-login.html">Admin</a>
+    </nav>
+  </header>
+
+  <div class="form-page" id="profileBox">
+    <h2>Player Profile</h2>
+    <div id="profileInfo"></div>
+    <button onclick="logoutUser()">Logout</button>
+  </div>
+
+  <div class="tournament-list">
+    <h2>My Tournaments</h2>
+    <div id="myTournaments"></div>
+  </div>
+
+  <script>
+    function getCurrentUser() {
+      const saved = localStorage.getItem("user");
+      return saved ? JSON.parse(saved) : null;
+    }
+
+    function isSamePlayer(item, user) {
+      if (!user || !item) return false;
+
+      if (user.pubgUid && item.pubgUid) {
+        return user.pubgUid === item.pubgUid;
+      }
+
+      return user.username === item.playerName;
+    }
+
+    function logoutUser() {
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+
+    function loadProfileInfo() {
+      const user = getCurrentUser();
+
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      document.getElementById("profileInfo").innerHTML = `
+        <p><strong>Username:</strong> ${user.username || "N/A"}</p>
+        <p><strong>Email:</strong> ${user.email || "N/A"}</p>
+        <p><strong>PUBG UID:</strong> ${user.pubgUid || "N/A"}</p>
+        <p><strong>Discord:</strong> ${user.discord || "N/A"}</p>
+      `;
+    }
+
+    async function loadMyTournaments() {
+      const user = getCurrentUser();
+
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const response = await fetch("http://localhost:5000/api/tournaments");
+      const tournaments = await response.json();
+
+      const container = document.getElementById("myTournaments");
+      container.innerHTML = "";
+
+      const relatedTournaments = tournaments.filter((tournament) => {
+        const isPending = tournament.pendingApprovals.some((player) =>
+          isSamePlayer(player, user)
+        );
+
+        const isApproved = tournament.players.some((player) =>
+          isSamePlayer(player, user)
+        );
+
+        return isPending || isApproved;
+      });
+
+      if (relatedTournaments.length === 0) {
+        container.innerHTML = "<p>You have not joined any tournaments yet.</p>";
+        return;
+      }
+
+      relatedTournaments.forEach((tournament) => {
+        const isPending = tournament.pendingApprovals.some((player) =>
+          isSamePlayer(player, user)
+        );
+
+        const isApproved = tournament.players.some((player) =>
+          isSamePlayer(player, user)
+        );
+
+        let playerStatus = "Unknown";
+        if (isPending) playerStatus = "Pending approval";
+        if (isApproved) playerStatus = "Approved";
+
+        let roomInfoHtml = `
+          <p><strong>Room Access:</strong> Hidden until you are approved and the match is Live</p>
+        `;
+
+        if (isApproved && tournament.status === "Live") {
+          roomInfoHtml = `
+            <div style="margin-top:12px; padding:12px; background: rgba(250,204,21,0.08); border-radius: 10px;">
+              <p><strong>Room ID:</strong> ${tournament.roomId || "Not set"}</p>
+              <p><strong>Room Password:</strong> ${tournament.roomPassword || "Not set"}</p>
+            </div>
+          `;
+        }
+
+        const block = document.createElement("div");
+        block.className = "tournament-item";
+        block.innerHTML = `
+          <h3>${tournament.name}</h3>
+          <p><strong>Mode:</strong> ${tournament.mode}</p>
+          <p><strong>Prize:</strong> ${tournament.prize}</p>
+          <p><strong>Date:</strong> ${tournament.date}</p>
+          <p><strong>Tournament Status:</strong> ${tournament.status || "Waiting"}</p>
+          <p><strong>Your Status:</strong> ${playerStatus}</p>
+          <p><strong>Players:</strong> ${tournament.players.length} / ${tournament.maxPlayers}</p>
+          ${roomInfoHtml}
+        `;
+
+        container.appendChild(block);
+      });
+    }
+
+    loadProfileInfo();
+    loadMyTournaments();
+  </script>
+</body>
+</html>

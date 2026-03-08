@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tournaments</title>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <h1>PUBG Arena</h1>
+    <nav>
+      <a href="../index.html">Home</a>
+      <a href="profile.html">Profile</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <div class="tournament-list">
+    <h2>Available Tournaments</h2>
+    <div id="tournaments"></div>
+  </div>
+
+  <script>
+    function getCurrentUser() {
+      const saved = localStorage.getItem("user");
+      return saved ? JSON.parse(saved) : null;
+    }
+
+    function isSamePlayer(item, user) {
+      if (!user || !item) return false;
+
+      if (user.pubgUid && item.pubgUid) {
+        return user.pubgUid === item.pubgUid;
+      }
+
+      return user.username === item.playerName;
+    }
+
+    function getJoinState(tournament, user) {
+      if (!user) return "login-required";
+
+      const isPending = tournament.pendingApprovals.some((player) =>
+        isSamePlayer(player, user)
+      );
+
+      if (isPending) return "pending";
+
+      const isApproved = tournament.players.some((player) =>
+        isSamePlayer(player, user)
+      );
+
+      if (isApproved) return "approved";
+
+      if (tournament.players.length >= tournament.maxPlayers) return "full";
+
+      return "can-join";
+    }
+
+    function getButtonInfo(state) {
+      if (state === "pending") {
+        return { text: "Request Sent", disabled: true };
+      }
+
+      if (state === "approved") {
+        return { text: "Joined", disabled: true };
+      }
+
+      if (state === "full") {
+        return { text: "Full", disabled: true };
+      }
+
+      if (state === "login-required") {
+        return { text: "Login Required", disabled: true };
+      }
+
+      return { text: "Join Tournament", disabled: false };
+    }
+
+    async function loadTournaments() {
+      const response = await fetch("http://localhost:5000/api/tournaments");
+      const tournaments = await response.json();
+
+      const container = document.getElementById("tournaments");
+      const user = getCurrentUser();
+
+      container.innerHTML = "";
+
+      tournaments.forEach((tournament) => {
+        const state = getJoinState(tournament, user);
+        const buttonInfo = getButtonInfo(state);
+        const approvedForTournament = state === "approved";
+
+        const block = document.createElement("div");
+        block.className = "tournament-item";
+
+        let roomInfoHtml = `
+          <p><strong>Room Access:</strong> Available only to approved players when match is Live</p>
+        `;
+
+        if (approvedForTournament && tournament.status === "Live") {
+          roomInfoHtml = `
+            <div style="margin-top:14px; padding:14px; background: rgba(250,204,21,0.08); border-radius: 10px;">
+              <p><strong>Room ID:</strong> ${tournament.roomId || "Not set yet"}</p>
+              <p><strong>Room Password:</strong> ${tournament.roomPassword || "Not set yet"}</p>
+            </div>
+          `;
+        }
+
+        block.innerHTML = `
+          <h3>${tournament.name}</h3>
+          <p><strong>Mode:</strong> ${tournament.mode}</p>
+          <p><strong>Prize:</strong> ${tournament.prize}</p>
+          <p><strong>Date:</strong> ${tournament.date}</p>
+          <p><strong>Status:</strong> ${tournament.status || "Waiting"}</p>
+          <p><strong>Players:</strong> ${tournament.players.length} / ${tournament.maxPlayers}</p>
+
+          <button
+            onclick="joinTournament(${tournament.id})"
+            ${buttonInfo.disabled ? "disabled" : ""}
+            style="${buttonInfo.disabled ? "opacity:0.6; cursor:not-allowed;" : ""}"
+          >
+            ${buttonInfo.text}
+          </button>
+
+          ${roomInfoHtml}
+        `;
+
+        container.appendChild(block);
+      });
+    }
+
+    async function joinTournament(tournamentId) {
+      const user = getCurrentUser();
+
+      if (!user) {
+        alert("You must login first");
+        return;
+      }
+
+      const response = await fetch("http://localhost:5000/api/tournaments/join", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          tournamentId,
+          playerName: user.username,
+          pubgUid: user.pubgUid,
+          discord: user.discord
+        })
+      });
+
+      const data = await response.json();
+      alert(data.message);
+      loadTournaments();
+    }
+
+    loadTournaments();
+  </script>
+</body>
+</html>

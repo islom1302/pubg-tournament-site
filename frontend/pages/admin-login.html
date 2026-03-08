@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Login</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+<div class="form-page">
+
+<h2>Admin Login</h2>
+
+<form id="adminLogin">
+
+<input type="password" id="adminPassword" placeholder="Admin password" required>
+
+<button type="submit">Enter Admin Panel</button>
+
+</form>
+
+<p id="message"></p>
+
+</div>
+
+
+<script>
+
+const ADMIN_PASSWORD = "130213"
+
+document.getElementById("adminLogin").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+const password = document.getElementById("adminPassword").value
+
+if(password === ADMIN_PASSWORD){
+
+localStorage.setItem("admin","true")
+
+window.location.href = "admin.html"
+
+}else{
+
+document.getElementById("message").innerText = "Wrong password"
+
+}
+
+})
+
+</script>
+
+</body>
+</html>

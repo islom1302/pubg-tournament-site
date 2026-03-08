@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sign Up</title>
+
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+<div class="form-page">
+
+<h2>Create Account</h2>
+
+<form id="signupForm">
+
+<input type="text" id="username" placeholder="Username" required>
+
+<input type="email" id="email" placeholder="Email" required>
+
+<input type="password" id="password" placeholder="Password" required>
+
+<input type="text" id="pubgUid" placeholder="PUBG UID">
+
+<input type="text" id="discord" placeholder="Discord username">
+
+<button type="submit">Sign Up</button>
+
+</form>
+
+<p id="message"></p>
+
+</div>
+
+
+<script>
+
+document.getElementById("signupForm").addEventListener("submit", async function(e){
+
+e.preventDefault()
+
+const username = document.getElementById("username").value
+const email = document.getElementById("email").value
+const password = document.getElementById("password").value
+const pubgUid = document.getElementById("pubgUid").value
+const discord = document.getElementById("discord").value
+
+
+const response = await fetch("http://localhost:5000/api/auth/signup",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body: JSON.stringify({
+username,
+email,
+password,
+pubgUid,
+discord
+})
+
+})
+
+const data = await response.json()
+
+document.getElementById("message").innerText = data.message
+
+})
+
+</script>
+
+
+</body>
+</html>
