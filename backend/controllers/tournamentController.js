@@ -15,7 +15,8 @@ const getTournaments = async (req, res) => {
     const tournaments = await Tournament.find();
     res.json(tournaments);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.log("Get tournaments error:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -48,7 +49,8 @@ const createTournament = async (req, res) => {
       tournament: newTournament,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.log("Create tournament error:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -64,7 +66,8 @@ const deleteTournament = async (req, res) => {
 
     res.json({ message: "Tournament deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.log("Delete tournament error:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -120,7 +123,8 @@ const joinTournament = async (req, res) => {
       tournament,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.log("Join tournament error:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -159,7 +163,8 @@ const approvePlayer = async (req, res) => {
       tournament,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.log("Approve player error:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -190,7 +195,8 @@ const declinePlayer = async (req, res) => {
       tournament,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.log("Decline player error:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -216,7 +222,8 @@ const updateCustomRoom = async (req, res) => {
       tournament,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.log("Update custom room error:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 

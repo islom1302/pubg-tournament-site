@@ -30,6 +30,6 @@ const tournamentSchema = new mongoose.Schema({
     type: String,
     default: "Waiting"
   }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("Tournament", tournamentSchema);
