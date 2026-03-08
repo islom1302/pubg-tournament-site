@@ -33,10 +33,3 @@ const tournamentSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("Tournament", tournamentSchema);
-    type: String,
-    default: "Waiting"
-  }
-});
-
-
-module.exports = mongoose.model("Tournament", tournamentSchema);
