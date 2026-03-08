@@ -50,7 +50,7 @@
       const maxPlayers = document.getElementById("maxPlayers").value;
 
       try {
-        const response = await fetch("http://localhost:5000/api/tournaments", {
+        const response = await fetch("http://pubg-api-d450.onrender.com/api/tournaments", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -68,7 +68,7 @@
     });
 
     async function loadAdminPanel() {
-      const response = await fetch("http://localhost:5000/api/tournaments");
+      const response = await fetch("http://pubg-api-d450.onrender.com/api/tournaments");
       const tournaments = await response.json();
 
       const container = document.getElementById("adminContent");
@@ -161,7 +161,7 @@
     }
 
     async function approvePlayer(tournamentId, requestId) {
-      const response = await fetch("http://localhost:5000/api/tournaments/approve", {
+      const response = await fetch("http://pubg-api-d450.onrender.com/api/tournaments/approve", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -175,7 +175,7 @@
     }
 
     async function declinePlayer(tournamentId, requestId) {
-      const response = await fetch("http://localhost:5000/api/tournaments/decline", {
+      const response = await fetch("http://pubg-api-d450.onrender.com/api/tournaments/decline", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -193,7 +193,7 @@
       const roomPassword = document.getElementById(`roomPassword-${tournamentId}`).value;
       const status = document.getElementById(`status-${tournamentId}`).value;
 
-      const response = await fetch(`http://localhost:5000/api/tournaments/${tournamentId}/custom-room`, {
+      const response = await fetch(`http://pubg-api-d450.onrender.com/api/tournaments/${tournamentId}/custom-room`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -210,7 +210,7 @@
       const confirmed = confirm("Are you sure you want to delete this tournament?");
       if (!confirmed) return;
 
-      const response = await fetch(`http://localhost:5000/api/tournaments/${id}`, {
+      const response = await fetch(`http://pubg-api-d450.onrender.com/api/tournaments/${id}`, {
         method: "DELETE"
       });
 
