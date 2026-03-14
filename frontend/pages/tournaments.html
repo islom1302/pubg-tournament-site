@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tournaments</title>
@@ -9,18 +9,44 @@
 </head>
 <body>
   <header class="navbar">
-    <h1>PUBG Arena</h1>
+    <div class="brand-wrap">
+      <h1 class="m-0" data-i18n="site_title">PUBG Arena</h1>
+      <span class="brand-badge">ESPORTS</span>
+    </div>
+
+    <div class="dropdown lang-float">
+      <button
+        id="langButton"
+        class="lang-circle-btn"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        🌐
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end lang-menu">
+        <li><button class="dropdown-item" type="button" data-lang-switch="en">🇬🇧 English</button></li>
+        <li><button class="dropdown-item" type="button" data-lang-switch="ru">🇷🇺 Русский</button></li>
+        <li><button class="dropdown-item" type="button" data-lang-switch="uz">🇺🇿 O'zbek</button></li>
+      </ul>
+    </div>
+
     <nav>
-      <a href="../index.html">Home</a>
-      <a href="profile.html">Profile</a>
-      <a href="login.html">Login</a>
+      <a href="../index.html" data-i18n="home">Home</a>
+      <a href="profile.html" data-i18n="profile">Profile</a>
+      <a href="login.html" data-i18n="login">Login</a>
     </nav>
   </header>
 
   <div class="tournament-list">
-    <h2>Available Tournaments</h2>
+    <h2 data-i18n="available_tournaments">Available Tournaments</h2>
     <div id="tournaments"></div>
   </div>
+
+  <script src="../lang.js"></script>
+  <script src="../script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
     function getCurrentUser() {
@@ -41,41 +67,30 @@
     function getJoinState(tournament, user) {
       if (!user) return "login-required";
 
-      const isPending = tournament.pendingApprovals.some((player) =>
+      const isPending = (tournament.pendingApprovals || []).some((player) =>
         isSamePlayer(player, user)
       );
 
       if (isPending) return "pending";
 
-      const isApproved = tournament.players.some((player) =>
+      const isApproved = (tournament.players || []).some((player) =>
         isSamePlayer(player, user)
       );
 
       if (isApproved) return "approved";
 
-      if (tournament.players.length >= tournament.maxPlayers) return "full";
+      if ((tournament.players || []).length >= tournament.maxPlayers) return "full";
 
       return "can-join";
     }
 
     function getButtonInfo(state) {
-      if (state === "pending") {
-        return { text: "Request Sent", disabled: true };
-      }
+      if (state === "pending") return { text: t("request_sent"), disabled: true };
+      if (state === "approved") return { text: t("joined"), disabled: true };
+      if (state === "full") return { text: t("full"), disabled: true };
+      if (state === "login-required") return { text: t("login_required"), disabled: true };
 
-      if (state === "approved") {
-        return { text: "Joined", disabled: true };
-      }
-
-      if (state === "full") {
-        return { text: "Full", disabled: true };
-      }
-
-      if (state === "login-required") {
-        return { text: "Login Required", disabled: true };
-      }
-
-      return { text: "Join Tournament", disabled: false };
+      return { text: t("join_tournament"), disabled: false };
     }
 
     async function loadTournaments() {
@@ -96,28 +111,28 @@
         block.className = "tournament-item";
 
         let roomInfoHtml = `
-          <p><strong>Room Access:</strong> Available only to approved players when match is Live</p>
+          <p><strong>${t("room_access")}:</strong> ${t("room_access_live")}</p>
         `;
 
         if (approvedForTournament && tournament.status === "Live") {
           roomInfoHtml = `
-            <div style="margin-top:14px; padding:14px; background: rgba(250,204,21,0.08); border-radius: 10px;">
-              <p><strong>Room ID:</strong> ${tournament.roomId || "Not set yet"}</p>
-              <p><strong>Room Password:</strong> ${tournament.roomPassword || "Not set yet"}</p>
+            <div class="room-live-box">
+              <p><strong>${t("room_id")}:</strong> ${tournament.roomId || t("not_set_yet")}</p>
+              <p><strong>${t("room_password")}:</strong> ${tournament.roomPassword || t("not_set_yet")}</p>
             </div>
           `;
         }
 
         block.innerHTML = `
           <h3>${tournament.name}</h3>
-          <p><strong>Mode:</strong> ${tournament.mode}</p>
-          <p><strong>Prize:</strong> ${tournament.prize}</p>
-          <p><strong>Date:</strong> ${tournament.date}</p>
-          <p><strong>Status:</strong> ${tournament.status || "Waiting"}</p>
-          <p><strong>Players:</strong> ${tournament.players.length} / ${tournament.maxPlayers}</p>
+          <p><strong>${t("mode")}:</strong> ${tournament.mode}</p>
+          <p><strong>${t("prize")}:</strong> ${tournament.prize}</p>
+          <p><strong>${t("date")}:</strong> ${tournament.date}</p>
+          <p><strong>${t("status")}:</strong> ${translateTournamentStatus(tournament.status || "Waiting")}</p>
+          <p><strong>${t("players")}:</strong> ${(tournament.players || []).length} / ${tournament.maxPlayers}</p>
 
           <button
-            onclick="joinTournament(${tournament.id})"
+            onclick="joinTournament('${tournament._id}')"
             ${buttonInfo.disabled ? "disabled" : ""}
             style="${buttonInfo.disabled ? "opacity:0.6; cursor:not-allowed;" : ""}"
           >
@@ -131,11 +146,19 @@
       });
     }
 
+    function translateTournamentStatus(status) {
+      if (status === "Waiting") return t("waiting");
+      if (status === "Open") return t("open");
+      if (status === "Live") return t("live");
+      if (status === "Finished") return t("finished");
+      return status;
+    }
+
     async function joinTournament(tournamentId) {
       const user = getCurrentUser();
 
       if (!user) {
-        alert("You must login first");
+        alert(t("must_login_first"));
         return;
       }
 
@@ -157,7 +180,9 @@
       loadTournaments();
     }
 
-    loadTournaments();
+    document.addEventListener("DOMContentLoaded", () => {
+      loadTournaments();
+    });
   </script>
 </body>
 </html>

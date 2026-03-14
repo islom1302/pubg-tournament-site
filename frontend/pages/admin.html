@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Panel</title>
@@ -19,14 +19,14 @@
 
   <div class="form-page">
     <h2>Create Tournament</h2>
-        <form id="createTournamentForm">
-          <input type="text" id="name" placeholder="Tournament name" required />
-          <input type="text" id="mode" placeholder="Mode (Solo / Duo / Squad)" required />
-          <input type="text" id="prize" placeholder="Prize (example: 500 UC)" required />
-          <input type="date" id="date" required />
-          <input type="number" id="maxPlayers" placeholder="Max players (example: 20)" min="1" />
-          <button type="submit">Create Tournament</button>
-        </form>
+    <form id="createTournamentForm">
+      <input type="text" id="name" placeholder="Tournament name" required />
+      <input type="text" id="mode" placeholder="Mode (Solo / Duo / Squad)" required />
+      <input type="text" id="prize" placeholder="Prize (example: 500 UC)" required />
+      <input type="date" id="date" required />
+      <input type="number" id="maxPlayers" placeholder="Max players (example: 20)" min="1" />
+      <button type="submit">Create Tournament</button>
+    </form>
     <p id="createMessage"></p>
   </div>
 
@@ -79,23 +79,23 @@
         block.className = "tournament-item";
 
         let pendingHtml = "";
-        if (tournament.pendingApprovals.length === 0) {
+        if (!tournament.pendingApprovals || tournament.pendingApprovals.length === 0) {
           pendingHtml = "<p>No pending requests</p>";
         } else {
           tournament.pendingApprovals.forEach((request) => {
             pendingHtml += `
-              <div style="margin-bottom: 14px; padding: 12px; background: rgba(255,255,255,0.04); border-radius: 10px;">
+              <div class="pending-box">
                 <p><strong>Player:</strong> ${request.playerName}</p>
                 <p><strong>PUBG UID:</strong> ${request.pubgUid || "N/A"}</p>
                 <p><strong>Discord:</strong> ${request.discord || "N/A"}</p>
 
-                <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
-                  <button onclick="approvePlayer(${tournament.id}, ${request.id})">
+                <div class="inline-actions">
+                  <button onclick="approvePlayer('${tournament._id}', ${request.id})">
                     Approve
                   </button>
 
-                  <button 
-                    onclick="declinePlayer(${tournament.id}, ${request.id})"
+                  <button
+                    onclick="declinePlayer('${tournament._id}', ${request.id})"
                     style="background:#dc2626; color:white; border:none; padding:10px 16px; border-radius:8px; cursor:pointer;"
                   >
                     Decline
@@ -107,11 +107,11 @@
         }
 
         let approvedHtml = "";
-        if (tournament.players.length === 0) {
+        if (!tournament.players || tournament.players.length === 0) {
           approvedHtml = "<p>No approved players yet</p>";
         } else {
           approvedHtml = tournament.players.map((player) => `
-            <div style="margin-bottom: 10px; padding: 10px; background: rgba(250,204,21,0.08); border-radius: 10px;">
+            <div class="approved-box">
               <p><strong>${player.playerName}</strong> — Approved</p>
             </div>
           `).join("");
@@ -123,34 +123,35 @@
           <p><strong>Prize:</strong> ${tournament.prize}</p>
           <p><strong>Date:</strong> ${tournament.date}</p>
           <p><strong>Status:</strong> ${tournament.status || "Waiting"}</p>
+          <p><strong>Players:</strong> ${(tournament.players || []).length} / ${tournament.maxPlayers}</p>
           <p><strong>Room ID:</strong> ${tournament.roomId || "Not set"}</p>
           <p><strong>Room Password:</strong> ${tournament.roomPassword || "Not set"}</p>
 
-          <div style="margin: 18px 0; padding: 14px; background: rgba(255,255,255,0.04); border-radius: 12px;">
+          <div class="room-box">
             <h4>Set Custom Room</h4>
-            <input id="roomId-${tournament.id}" type="text" placeholder="Room ID" value="${tournament.roomId || ""}" style="width:100%; padding:12px; margin-bottom:10px; border:none; border-radius:8px;">
-            <input id="roomPassword-${tournament.id}" type="text" placeholder="Room Password" value="${tournament.roomPassword || ""}" style="width:100%; padding:12px; margin-bottom:10px; border:none; border-radius:8px;">
-            <select id="status-${tournament.id}" style="width:100%; padding:12px; margin-bottom:10px; border:none; border-radius:8px;">
+            <input id="roomId-${tournament._id}" type="text" placeholder="Room ID" value="${tournament.roomId || ""}">
+            <input id="roomPassword-${tournament._id}" type="text" placeholder="Room Password" value="${tournament.roomPassword || ""}">
+            <select id="status-${tournament._id}">
               <option value="Waiting" ${tournament.status === "Waiting" ? "selected" : ""}>Waiting</option>
               <option value="Open" ${tournament.status === "Open" ? "selected" : ""}>Open</option>
               <option value="Live" ${tournament.status === "Live" ? "selected" : ""}>Live</option>
               <option value="Finished" ${tournament.status === "Finished" ? "selected" : ""}>Finished</option>
             </select>
-            <button onclick="saveCustomRoom(${tournament.id})">Save Custom Room</button>
+            <button onclick="saveCustomRoom('${tournament._id}')">Save Custom Room</button>
           </div>
 
           <div style="margin: 15px 0;">
-            <button onclick="deleteTournament(${tournament.id})" style="background:#dc2626; color:white; border:none; padding:10px 18px; border-radius:8px; cursor:pointer;">
+            <button onclick="deleteTournament('${tournament._id}')" style="background:#dc2626; color:white; border:none; padding:10px 18px; border-radius:8px; cursor:pointer;">
               Delete Tournament
             </button>
           </div>
 
-          <hr style="border-color: rgba(255,255,255,0.08); margin: 20px 0;">
+          <hr>
 
           <h4>Pending Requests</h4>
           ${pendingHtml}
 
-          <hr style="border-color: rgba(255,255,255,0.08); margin: 20px 0;">
+          <hr>
 
           <h4>Approved Players</h4>
           ${approvedHtml}
