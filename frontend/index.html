@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,11 +33,16 @@
     </ul>
   </div>
 
-  <nav>
+  <nav id="mainNav">
     <a href="index.html" data-i18n="home">Home</a>
     <a href="pages/tournaments.html" data-i18n="tournaments">Tournaments</a>
-    <a href="pages/login.html" data-i18n="login">Login</a>
-    <a href="pages/signup.html" data-i18n="signup">Sign Up</a>
+
+    <a href="pages/login.html" id="navLogin" data-i18n="login">Login</a>
+    <a href="pages/signup.html" id="navSignup" data-i18n="signup">Sign Up</a>
+
+    <a href="pages/profile.html" id="navProfile" data-i18n="profile" style="display:none;">Profile</a>
+    <a href="#" id="navLogout" data-i18n="logout" style="display:none;">Logout</a>
+
     <a href="pages/admin-login.html" data-i18n="admin">Admin</a>
   </nav>
 </header>
@@ -54,7 +60,8 @@
 
     <div class="hero-actions">
       <a class="btn hero-btn-primary" href="pages/tournaments.html" data-i18n="join_tournament">Join a Tournament</a>
-      <a class="btn hero-btn-secondary" href="pages/signup.html" data-i18n="create_account">Create Account</a>
+      <a id="heroProfile" class="btn hero-btn-secondary" href="pages/profile.html" style="display:none;" data-i18n="profile">Profile</a>
+      <a id="heroSignup" class="btn hero-btn-secondary" href="pages/signup.html" data-i18n="create_account">Create Account</a>
     </div>
 
     <div class="hero-stats">

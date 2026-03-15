@@ -8,6 +8,37 @@ function setLanguage(lang) {
   updateLanguageButton(lang);
 }
 
+function requireAuth() {
+  const user = getCurrentUser();
+  if (!user) {
+    window.location.href = "login.html";
+  }
+}
+
+function redirectIfLoggedIn() {
+  const user = getCurrentUser();
+  if (user) {
+    window.location.href = "profile.html";
+  }
+}
+
+function updateHeroAuth() {
+  const user = getCurrentUser();
+
+  const heroSignup = document.getElementById("heroSignup");
+  const heroProfile = document.getElementById("heroProfile");
+
+  if (!heroSignup || !heroProfile) return;
+
+  if (user) {
+    heroSignup.style.display = "none";
+    heroProfile.style.display = "";
+  } else {
+    heroSignup.style.display = "";
+    heroProfile.style.display = "none";
+  }
+}
+
 function t(key) {
   const lang = getCurrentLanguage();
   return translations[lang]?.[key] || translations.en[key] || key;
@@ -60,11 +91,7 @@ function initLanguageSelector() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  initLanguageSelector();
-  applyTranslations();
-  updateLanguageButton();
-});
+
 
 function getCurrentLanguage() {
   return localStorage.getItem("lang") || "en";
@@ -175,4 +202,52 @@ function injectLanguageSelector() {
 document.addEventListener("DOMContentLoaded", () => {
   injectLanguageSelector();
   applyTranslations();
+});
+
+function getCurrentUser() {
+  const saved = localStorage.getItem("user");
+  return saved ? JSON.parse(saved) : null;
+}
+
+function updateNavbarAuth() {
+  const user = getCurrentUser();
+
+  const navLogin = document.getElementById("navLogin");
+  const navSignup = document.getElementById("navSignup");
+  const navProfile = document.getElementById("navProfile");
+  const navLogout = document.getElementById("navLogout");
+
+  if (user) {
+    if (navLogin) navLogin.style.display = "none";
+    if (navSignup) navSignup.style.display = "none";
+    if (navProfile) navProfile.style.display = "";
+    if (navLogout) navLogout.style.display = "";
+  } else {
+    if (navLogin) navLogin.style.display = "";
+    if (navSignup) navSignup.style.display = "";
+    if (navProfile) navProfile.style.display = "none";
+    if (navLogout) navLogout.style.display = "none";
+  }
+}
+
+function initLogout() {
+  const navLogout = document.getElementById("navLogout");
+  if (!navLogout) return;
+
+  navLogout.addEventListener("click", function (e) {
+    e.preventDefault();
+    localStorage.removeItem("user");
+    window.location.href = window.location.pathname.includes("/pages/")
+      ? "../index.html"
+      : "index.html";
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initLanguageSelector();
+  applyTranslations();
+  updateLanguageButton();
+  updateNavbarAuth();
+  updateHeroAuth();
+  initLogout();
 });

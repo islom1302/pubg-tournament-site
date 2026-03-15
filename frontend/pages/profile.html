@@ -1,37 +1,493 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile</title>
-  <link rel="stylesheet" href="../style.css" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-main: #070b14;
+      --bg-soft: #0f172a;
+      --card-bg: rgba(11, 22, 48, 0.92);
+      --card-bg-2: rgba(9, 17, 38, 0.95);
+      --text-main: #f8fafc;
+      --text-soft: #cbd5e1;
+      --text-muted: #94a3b8;
+      --line: rgba(255, 255, 255, 0.08);
+      --yellow-1: #facc15;
+      --yellow-2: #f59e0b;
+      --green: #22c55e;
+      --red: #ef4444;
+      --shadow-main: 0 18px 50px rgba(0, 0, 0, 0.35);
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(250, 204, 21, 0.08), transparent 28%),
+        linear-gradient(180deg, #05070d 0%, #0b1020 50%, #0a0f1c 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .navbar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: rgba(6, 10, 18, 0.88);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 24px;
+      color: var(--yellow-1);
+      letter-spacing: 0.4px;
+      text-shadow: 0 0 18px rgba(250, 204, 21, 0.18);
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(250, 204, 21, 0.14);
+      color: #fde68a;
+      border: 1px solid rgba(250, 204, 21, 0.18);
+    }
+
+    .nav-center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-center a {
+      color: #e5e7eb;
+      font-size: 14px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      transition: 0.22s ease;
+      font-weight: 600;
+    }
+
+    .nav-center a:hover {
+      color: var(--yellow-1);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .lang-float {
+      justify-self: end;
+      display: flex;
+      align-items: center;
+    }
+
+    .lang-circle-btn {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      border: none;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #facc15, #f59e0b);
+      color: #111827;
+      font-size: 18px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 24px rgba(250, 204, 21, 0.22);
+      cursor: pointer;
+      transition: 0.2s ease;
+      padding: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .lang-circle-btn:hover {
+      transform: translateY(-1px) scale(1.04);
+      box-shadow: 0 14px 28px rgba(250, 204, 21, 0.28);
+    }
+
+    .lang-circle-btn::after {
+      display: none !important;
+    }
+
+    .dropdown-menu-dark {
+      background: #111827;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .dropdown-menu-dark .dropdown-item {
+      color: white;
+      font-weight: 600;
+      padding: 10px 14px;
+    }
+
+    .dropdown-menu-dark .dropdown-item:hover {
+      background: var(--yellow-1);
+      color: black;
+    }
+
+    .profile-dashboard {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .profile-card,
+    .profile-tournaments {
+      background: linear-gradient(180deg, rgba(12, 24, 52, 0.97), rgba(9, 17, 38, 0.97));
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 22px;
+      box-shadow: var(--shadow-main);
+    }
+
+    .profile-card {
+      max-width: 420px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px;
+      text-align: center;
+    }
+
+    .profile-avatar {
+      font-size: 62px;
+      margin-bottom: 16px;
+    }
+
+    #playerName {
+      margin: 0 0 20px;
+      font-size: 28px;
+      font-weight: 700;
+      color: white;
+      word-break: break-word;
+    }
+
+    .profile-info {
+      text-align: left;
+      margin-top: 10px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      align-items: center;
+    }
+
+    .info-row span {
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .info-row strong {
+      color: white;
+      font-size: 14px;
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .profile-tournaments {
+      padding: 26px 24px;
+    }
+
+    .profile-tournaments h2 {
+      margin: 0 0 18px;
+      font-size: 30px;
+      color: white;
+    }
+
+    .tournament-card {
+      background: linear-gradient(180deg, rgba(8, 18, 40, 0.98), rgba(6, 14, 31, 0.98));
+      padding: 18px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .tournament-card h3 {
+      margin-top: 0;
+      margin-bottom: 14px;
+      color: var(--yellow-1);
+      font-size: 22px;
+    }
+
+    .tour-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 16px;
+      margin: 10px 0 0;
+    }
+
+    .tour-meta div {
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .tour-meta strong {
+      color: white;
+    }
+
+    .room-live-box {
+      background: rgba(250, 204, 21, 0.08);
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin-top: 14px;
+      border: 1px solid rgba(250, 204, 21, 0.14);
+      color: white;
+    }
+
+    .room-hidden {
+      opacity: 0.72;
+      font-size: 14px;
+      margin-top: 14px;
+      color: var(--text-soft);
+    }
+
+    .empty-box {
+      opacity: 0.7;
+      padding: 24px;
+      text-align: center;
+      color: var(--text-soft);
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    @media (min-width: 901px) {
+      .profile-dashboard {
+        grid-template-columns: 360px 1fr;
+        align-items: start;
+      }
+
+      .profile-card {
+        margin: 0;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .profile-dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-card {
+        max-width: 520px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto;
+        align-items: center;
+        gap: 10px 12px;
+        padding: 12px 12px 10px;
+      }
+
+      .brand-wrap {
+        grid-column: 1 / 2;
+        grid-row: 1;
+      }
+
+      .lang-float {
+        grid-column: 2 / 3;
+        grid-row: 1;
+        justify-self: end;
+      }
+
+      .nav-center {
+        grid-column: 1 / 3;
+        grid-row: 2;
+        justify-content: flex-start;
+        gap: 4px;
+      }
+
+      .nav-center a {
+        font-size: 12px;
+        padding: 6px 8px;
+      }
+
+      .navbar h1 {
+        font-size: 16px;
+      }
+
+      .brand-badge {
+        font-size: 9px;
+        padding: 4px 7px;
+      }
+
+      .lang-circle-btn {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        min-height: 38px;
+        font-size: 15px;
+      }
+
+      .profile-dashboard {
+        margin: 24px auto;
+        padding: 12px;
+      }
+
+      .profile-card,
+      .profile-tournaments {
+        padding: 18px 16px;
+      }
+
+      #playerName {
+        font-size: 22px;
+      }
+
+      .profile-tournaments h2 {
+        font-size: 22px;
+      }
+
+      .tour-meta {
+        grid-template-columns: 1fr;
+      }
+
+      .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+
+      .info-row strong {
+        text-align: left;
+      }
+    }
+  </style>
 </head>
+
 <body>
+
   <header class="navbar">
-    <h1>PUBG Arena</h1>
-    <nav>
-      <a href="../index.html">Home</a>
-      <a href="tournaments.html">Tournaments</a>
-      <a href="admin-login.html">Admin</a>
+    <div class="brand-wrap">
+      <h1 class="m-0" data-i18n="site_title">PUBG Arena</h1>
+      <span class="brand-badge">PLAYER</span>
+    </div>
+
+    <nav class="nav-center">
+      <a href="../index.html" data-i18n="home">Home</a>
+      <a href="tournaments.html" data-i18n="tournaments">Tournaments</a>
+      <a href="#" onclick="logoutUser()" data-i18n="logout">Logout</a>
     </nav>
+
+    <div class="dropdown lang-float">
+      <button
+        id="langButton"
+        class="lang-circle-btn"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        🌐
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+        <li><button class="dropdown-item" type="button" data-lang-switch="en">🇬🇧 English</button></li>
+        <li><button class="dropdown-item" type="button" data-lang-switch="ru">🇷🇺 Русский</button></li>
+        <li><button class="dropdown-item" type="button" data-lang-switch="uz">🇺🇿 O'zbek</button></li>
+      </ul>
+    </div>
   </header>
 
-  <div class="form-page" id="profileBox">
-    <h2>Player Profile</h2>
-    <div id="profileInfo"></div>
-    <button onclick="logoutUser()">Logout</button>
+  <div class="profile-dashboard">
+    <div class="profile-card">
+      <div class="profile-avatar">🎮</div>
+      <h2 id="playerName"></h2>
+      <div id="profileInfo"></div>
+    </div>
+
+    <div class="profile-tournaments">
+      <h2 data-i18n="my_tournaments">My Tournaments</h2>
+      <div id="myTournaments"></div>
+    </div>
   </div>
 
-  <div class="tournament-list">
-    <h2>My Tournaments</h2>
-    <div id="myTournaments"></div>
-  </div>
+  <script src="../lang.js"></script>
+  <script src="../script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    function getCurrentUser() {
-      const saved = localStorage.getItem("user");
-      return saved ? JSON.parse(saved) : null;
+    function loadProfileInfo() {
+      const user = getCurrentUser();
+
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      document.getElementById("playerName").innerText = user.username || "Player";
+
+      document.getElementById("profileInfo").innerHTML = `
+        <div class="profile-info">
+          <div class="info-row">
+            <span>${t("email")}</span>
+            <strong>${user.email || "N/A"}</strong>
+          </div>
+
+          <div class="info-row">
+            <span>${t("pubg_uid")}</span>
+            <strong>${user.pubgUid || "N/A"}</strong>
+          </div>
+
+          <div class="info-row">
+            <span>${t("telegram")}</span>
+            <strong>${user.discord || "N/A"}</strong>
+          </div>
+        </div>
+      `;
     }
 
     function isSamePlayer(item, user) {
@@ -44,25 +500,12 @@
       return user.username === item.playerName;
     }
 
-    function logoutUser() {
-      localStorage.removeItem("user");
-      window.location.href = "login.html";
-    }
-
-    function loadProfileInfo() {
-      const user = getCurrentUser();
-
-      if (!user) {
-        window.location.href = "login.html";
-        return;
-      }
-
-      document.getElementById("profileInfo").innerHTML = `
-        <p><strong>Username:</strong> ${user.username || "N/A"}</p>
-        <p><strong>Email:</strong> ${user.email || "N/A"}</p>
-        <p><strong>PUBG UID:</strong> ${user.pubgUid || "N/A"}</p>
-        <p><strong>Discord:</strong> ${user.discord || "N/A"}</p>
-      `;
+    function translateTournamentStatus(status) {
+      if (status === "Waiting") return t("waiting");
+      if (status === "Open") return t("open");
+      if (status === "Live") return t("live");
+      if (status === "Finished") return t("finished");
+      return status;
     }
 
     async function loadMyTournaments() {
@@ -79,68 +522,76 @@
       const container = document.getElementById("myTournaments");
       container.innerHTML = "";
 
-      const relatedTournaments = tournaments.filter((tournament) => {
-        const isPending = (tournament.pendingApprovals || []).some((player) =>
-          isSamePlayer(player, user)
-        );
-
-        const isApproved = (tournament.players || []).some((player) =>
-          isSamePlayer(player, user)
-        );
-
-        return isPending || isApproved;
+      const related = tournaments.filter((t) => {
+        const pending = (t.pendingApprovals || []).some((p) => isSamePlayer(p, user));
+        const approved = (t.players || []).some((p) => isSamePlayer(p, user));
+        return pending || approved;
       });
 
-      if (relatedTournaments.length === 0) {
-        container.innerHTML = "<p>You have not joined any tournaments yet.</p>";
+      if (related.length === 0) {
+        container.innerHTML = `
+          <div class="empty-box">
+            ${t("no_tournaments")}
+          </div>
+        `;
         return;
       }
 
-      relatedTournaments.forEach((tournament) => {
-        const isPending = (tournament.pendingApprovals || []).some((player) =>
-          isSamePlayer(player, user)
-        );
+      related.forEach((tournament) => {
+        const pending = (tournament.pendingApprovals || []).some((p) => isSamePlayer(p, user));
+        const approved = (tournament.players || []).some((p) => isSamePlayer(p, user));
 
-        const isApproved = (tournament.players || []).some((player) =>
-          isSamePlayer(player, user)
-        );
+        let statusBadge = `<span class="badge bg-secondary">Unknown</span>`;
+        if (pending) statusBadge = `<span class="badge bg-warning text-dark">${t("pending_approval")}</span>`;
+        if (approved) statusBadge = `<span class="badge bg-success">${t("approved")}</span>`;
 
-        let playerStatus = "Unknown";
-        if (isPending) playerStatus = "Pending approval";
-        if (isApproved) playerStatus = "Approved";
-
-        let roomInfoHtml = `
-          <p><strong>Room Access:</strong> Hidden until you are approved and the match is Live</p>
+        let roomInfo = `
+          <div class="room-hidden">
+            ${t("room_hidden")}
+          </div>
         `;
 
-        if (isApproved && tournament.status === "Live") {
-          roomInfoHtml = `
+        if (approved && tournament.status === "Live") {
+          roomInfo = `
             <div class="room-live-box">
-              <p><strong>Room ID:</strong> ${tournament.roomId || "Not set"}</p>
-              <p><strong>Room Password:</strong> ${tournament.roomPassword || "Not set"}</p>
+              <div><strong>${t("room_id")}:</strong> ${tournament.roomId || t("not_set")}</div>
+              <div><strong>${t("room_password")}:</strong> ${tournament.roomPassword || t("not_set")}</div>
             </div>
           `;
         }
 
         const block = document.createElement("div");
-        block.className = "tournament-item";
+        block.className = "tournament-card";
+
         block.innerHTML = `
           <h3>${tournament.name}</h3>
-          <p><strong>Mode:</strong> ${tournament.mode}</p>
-          <p><strong>Prize:</strong> ${tournament.prize}</p>
-          <p><strong>Date:</strong> ${tournament.date}</p>
-          <p><strong>Tournament Status:</strong> ${tournament.status || "Waiting"}</p>
-          <p><strong>Your Status:</strong> ${playerStatus}</p>
-          <p><strong>Players:</strong> ${(tournament.players || []).length} / ${tournament.maxPlayers}</p>
-          ${roomInfoHtml}
+
+          <div class="tour-meta">
+            <div><strong>${t("mode")}:</strong> ${tournament.mode}</div>
+            <div><strong>${t("prize")}:</strong> ${tournament.prize}</div>
+            <div><strong>${t("date")}:</strong> ${tournament.date}</div>
+            <div><strong>${t("status")}:</strong> ${translateTournamentStatus(tournament.status || "Waiting")}</div>
+            <div><strong>${t("your_status")}:</strong> ${statusBadge}</div>
+            <div><strong>${t("players")}:</strong> ${(tournament.players || []).length}/${tournament.maxPlayers}</div>
+          </div>
+
+          ${roomInfo}
         `;
 
         container.appendChild(block);
       });
     }
 
+    function logoutUser() {
+      localStorage.removeItem("user");
+      window.location.href = "../index.html";
+    }
+
+    requireAuth();
     loadProfileInfo();
     loadMyTournaments();
+    applyTranslations();
+    updateLanguageButton();
   </script>
 </body>
 </html>

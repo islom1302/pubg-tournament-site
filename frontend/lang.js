@@ -9,6 +9,10 @@ const translations = {
     admin: "Admin",
     logout: "Logout",
 
+    loading:"Loading tournaments...",
+    no_tournaments_available:"No tournaments available",
+    joining:"Joining...",
+
     hero_tag: "COMPETITIVE PUBG TOURNAMENTS",
     hero_title: "ENTER THE BATTLEGROUND",
     hero_text: "Join custom PUBG tournaments, build your profile, compete with real players, and rise through the leaderboard.",
@@ -46,7 +50,7 @@ const translations = {
     email_placeholder: "Email",
     password_placeholder: "Password",
     pubg_uid_placeholder: "PUBG UID",
-    discord_placeholder: "Discord username",
+    telegram_placeholder: "Telegram username",
 
     room_access: "Room Access",
     available_tournaments: "Available Tournaments",
@@ -68,7 +72,15 @@ const translations = {
     open: "Open",
     live: "Live",
     finished: "Finished",
-    room_access_live: "Available only to approved players when match is Live"
+    room_access_live: "Available only to approved players when match is Live",
+    email:"Email",
+    pubg_uid:"PUBG UID",
+    telegram:"Telegram",
+    my_tournaments:"My Tournaments",
+    no_tournaments:"No tournaments joined yet",
+    pending_approval:"Pending",
+    approved:"Approved",
+    not_set:"Not set",
   },
 
   ru: {
@@ -118,8 +130,7 @@ const translations = {
     email_placeholder: "Email",
     password_placeholder: "Пароль",
     pubg_uid_placeholder: "PUBG UID",
-    discord_placeholder: "Имя в Discord",
-
+    telegram_placeholder: "Telegram username",
     room_access: "Доступ к комнате",
     available_tournaments: "Доступные турниры",
     request_sent: "Запрос отправлен",
@@ -140,7 +151,18 @@ const translations = {
     open: "Открыто",
     live: "Идет матч",
     finished: "Завершено",
-    room_access_live: "Доступно только одобренным игрокам, когда матч Live"
+    room_access_live: "Доступно только одобренным игрокам, когда матч Live",
+    email:"Email",
+    pubg_uid:"PUBG UID",
+    telegram:"Telegram",
+    my_tournaments:"Мои турниры",
+    no_tournaments:"Вы не участвуете в турнирах",
+    pending_approval:"Ожидание",
+    approved:"Одобрен",
+    not_set:"Не задано",
+    loading:"Загрузка турниров...",
+    no_tournaments_available:"Нет доступных турниров",
+    joining:"Подключение...",
   },
 
   uz: {
@@ -190,8 +212,7 @@ const translations = {
     email_placeholder: "Email",
     password_placeholder: "Parol",
     pubg_uid_placeholder: "PUBG UID",
-    discord_placeholder: "Discord nomi",
-
+    telegram_placeholder: "Telegram username",
     room_access: "Xona ma'lumotlari",
     available_tournaments: "Mavjud turnirlar",
     request_sent: "So'rov yuborildi",
@@ -212,6 +233,17 @@ const translations = {
     open: "Ochiq",
     live: "Jonli",
     finished: "Tugagan",
-    room_access_live: "Faqat tasdiqlangan o'yinchilarga match Live bo'lganda ko'rinadi"
+    room_access_live: "Faqat tasdiqlangan o'yinchilarga match Live bo'lganda ko'rinadi",
+    email:"Email",
+    pubg_uid:"PUBG UID",
+    telegram:"Telegram",
+    my_tournaments:"Mening turnirlarim",
+    no_tournaments:"Siz hali turnirga qo'shilmagansiz",
+    pending_approval:"Kutilmoqda",
+    approved:"Tasdiqlangan",
+    not_set:"Kiritilmagan",
+    loading:"Загрузка турниров...",
+    no_tournaments_available:"Нет доступных турниров",
+    joining:"Подключение...",
   }
 };
