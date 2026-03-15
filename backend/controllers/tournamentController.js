@@ -200,6 +200,38 @@ const declinePlayer = async (req, res) => {
   }
 };
 
+const removePlayer = async (req, res) => {
+  try {
+    const { tournamentId, playerId } = req.body;
+
+    const tournament = await Tournament.findById(tournamentId);
+
+    if (!tournament) {
+      return res.status(404).json({ message: "Tournament not found" });
+    }
+
+    const playerIndex = tournament.players.findIndex(
+      (p) => String(p.id) === String(playerId)
+    );
+
+    if (playerIndex === -1) {
+      return res.status(404).json({ message: "Player not found" });
+    }
+
+    tournament.players.splice(playerIndex, 1);
+
+    await tournament.save();
+
+    res.json({
+      message: "Player removed successfully",
+      tournament,
+    });
+  } catch (error) {
+    console.log("Remove player error:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const updateCustomRoom = async (req, res) => {
   try {
     const { id } = req.params;
@@ -234,5 +266,6 @@ module.exports = {
   joinTournament,
   approvePlayer,
   declinePlayer,
+  removePlayer,
   updateCustomRoom,
 };
